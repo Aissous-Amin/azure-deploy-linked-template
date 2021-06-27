@@ -20,9 +20,10 @@ steps:
     location: 'West Europe'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/azureDeploy.json'
-    overrideParameters: '-projectName myarmpipeline'
+    overrideParameters: '-projectName azure-deploy-linked-template'
     deploymentMode: 'Incremental'
-    deploymentName: 'DeployPipelineLinkedTemplate'
+    deploymentName: 'DeployPipelineTemplate'
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
