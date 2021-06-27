@@ -38,7 +38,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://dev.azure.com/devopstest010101/_git/coretechweb-test?path=%2Fartifacts%2Fstorage.json"
+          "uri": "https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/artefacts/storage.json"
         },
         "parameters": {
           "storageAccountName": {
