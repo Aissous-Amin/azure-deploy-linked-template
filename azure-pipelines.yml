@@ -20,7 +20,7 @@ steps:
     location: 'West Europe'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/azureDeploy.json'
-    overrideParameters: '-projectName azure-deploy-linked-template'
+    overrideParameters: '-projectName coretechweb-test'
     deploymentMode: 'Incremental'
     deploymentName: 'DeployPipelineTemplate'
 
