@@ -835,101 +835,22 @@
             "condition": "[parameters('deployWaf')]"
         },
         {
-            "type": "Microsoft.Network/frontdoors",
-            "apiVersion": "2019-05-01",
-            "name": "[parameters('frontDoorName')]",
-            "location": "Global",
-            "dependsOn": [
-                "[variables('wafPolicyId')]"
-            ],
+            "name": "linkedTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
             "properties": {
-                "backendPoolsSettings": {
-                    "enforceCertificateNameCheck": "[parameters('frontDoorEnforceCertificateNameCheck')]",
-                    "sendRecvTimeoutSeconds": 120
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/artefacts/storage.json"
                 },
-                "enabledState": "Enabled",
-                "resourceState": "Enabled",
-                "backendPools": [
-                    {
-                        "name": "[parameters('frontDoorBackendPool').name]",
-                        "properties": {
-                            "backends": [
-                                {
-                                    "address": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apimServiceName'))).hostnameConfigurations[0].hostName]",
-                                    "httpPort": 80,
-                                    "httpsPort": 443,
-                                    "priority": 1,
-                                    "weight": 100,
-                                    "backendHostHeader": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apimServiceName'))).hostnameConfigurations[0].hostName]"
-                                }
-                            ],
-                            "healthProbeSettings": {
-                                "id": "[variables('frontDoorHealthProbeSettingsId')]"
-                            },
-                            "loadBalancingSettings": {
-                                "id": "[variables('frontDoorLoadBalancerId')]"
-                            }
-                        }
+                "parameters": {
+                    "frontdoors_frontdoor_devops_test_name": {
+                        "value": "[parameters('frontDoorName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
                     }
-                ],
-                "healthProbeSettings": [
-                    {
-                        "name": "[parameters('frontDoorHealthProbeSettings').name]",
-                        "properties": {
-                            "intervalInSeconds": "[parameters('frontDoorHealthProbeSettings').intervalInSeconds]",
-                            "path": "[parameters('frontDoorHealthProbeSettings').path]",
-                            "protocol": "[parameters('frontDoorHealthProbeSettings').protocol]"
-                        }
-                    }
-                ],
-                "frontendEndpoints": [
-                    {
-                        "name": "[parameters('frontDoorFrontendEndpoint').name]",
-                        "properties": {
-                            "hostName": "[variables('frontDoorHostName')]",
-                            "sessionAffinityEnabledState": "[parameters('frontDoorFrontendEndpoint').sessionAffinityEnabledState]",
-                            "sessionAffinityTtlSeconds": "[parameters('frontDoorFrontendEndpoint').sessionAffinityTtlSeconds]",
-                            "resourceState": "Enabled",
-                            "webApplicationFirewallPolicyLink": {
-                                "id": "[if(parameters('deployWaf'), variables('wafPolicyId'), json('null'))]"
-                            }
-                        }
-                    }
-                ],
-                "loadBalancingSettings": [
-                    {
-                        "name": "[parameters('frontDoorBackendPool').loadBalancerName]",
-                        "properties": {
-                            "additionalLatencyMilliseconds": 0,
-                            "sampleSize": 4,
-                            "successfulSamplesRequired": 2
-                        }
-                    }
-                ],
-                "routingRules": [
-                    {
-                        "name": "[parameters('frontDoorRoutingRule').name]",
-                        "properties": {
-                            "frontendEndpoints": [
-                                {
-                                    "id": "[variables('frontDoorFrontedEndpointId')]"
-                                }
-                            ],
-                            "acceptedProtocols": "[parameters('frontDoorRoutingRule').acceptedProtocols]",
-                            "patternsToMatch": "[parameters('frontDoorRoutingRule').patternsToMatch]",
-                            "routeConfiguration": {
-                                "@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
-                                "customForwardingPath": "/",
-                                "forwardingProtocol": "[parameters('frontDoorRoutingRule').forwardingProtocol]",
-                                "backendPool": {
-                                    "id": "[variables('frontDoorBackendPoolId')]"
-                                },
-                                "cacheConfiguration": "[parameters('frontDoorRoutingRule').cacheConfiguration]"
-                            }
-                        }
-                    }
-                ],
-                "friendlyName": "[parameters('frontDoorName')]"
+                }
             }
         },
         {

@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "frontdoors_frontdoor_devops_test_name": {
+            "value": "frontdoor-devops-test"
+        },
+        "FrontDoorWebApplicationFirewallPolicies_FrontDoorApimSampleWaf_externalid": {
+            "value": "FrontDoorApimSampleWaf"
+        }
+    }
+}

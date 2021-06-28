@@ -1,0 +1,133 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "frontdoors_frontdoor_devops_test_name": {
+            "defaultValue": "frontdoor-devops-test",
+            "type": "String"
+        },
+        "FrontDoorWebApplicationFirewallPolicies_FrontDoorApimSampleWaf_externalid": {
+            "defaultValue": "FrontDoorApimSampleWaf",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/frontdoors",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('frontdoors_frontdoor_devops_test_name')]",
+            "location": "Global",
+            "properties": {
+                "resourceState": "Enabled",
+                "enabledState": "Enabled",
+                "friendlyName": "[parameters('frontdoors_frontdoor_devops_test_name')]",
+                "backendPools": [
+                    {
+                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/BackendPools/ApimBackendPool')]",
+                        "name": "ApimBackendPool",
+                        "properties": {
+                            "resourceState": "Enabled",
+                            "backends": [
+                                {
+                                    "address": "apim-devops-test.azure-api.net",
+                                    "httpPort": 80,
+                                    "httpsPort": 443,
+                                    "priority": 1,
+                                    "weight": 100,
+                                    "backendHostHeader": "apim-devops-test.azure-api.net",
+                                    "enabledState": "Enabled"
+                                }
+                            ],
+                            "healthProbeSettings": {
+                                "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/healthProbeSettings/ApimHealthProbeSettings')]"
+                            },
+                            "loadBalancingSettings": {
+                                "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/loadBalancingSettings/ApimLoadBalancer')]"
+                            }
+                        }
+                    }
+                ],
+                "healthProbeSettings": [
+                    {
+                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/HealthProbeSettings/ApimHealthProbeSettings')]",
+                        "name": "ApimHealthProbeSettings",
+                        "properties": {
+                            "intervalInSeconds": 30,
+                            "path": "/status-0123456789abcdef",
+                            "protocol": "Https",
+                            "resourceState": "Enabled",
+                            "enabledState": "Enabled",
+                            "healthProbeMethod": "Get"
+                        }
+                    }
+                ],
+                "frontendEndpoints": [
+                    {
+                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/FrontendEndpoints/MainFrontendEndpoint')]",
+                        "name": "MainFrontendEndpoint",
+                        "properties": {
+                            "hostName": "[concat(parameters('frontdoors_frontdoor_devops_test_name'), '.azurefd.net')]",
+                            "sessionAffinityEnabledState": "Disabled",
+                            "sessionAffinityTtlSeconds": 0,
+                            "resourceState": "Enabled",
+                            "webApplicationFirewallPolicyLink": {
+                                "id": "[parameters('FrontDoorWebApplicationFirewallPolicies_FrontDoorApimSampleWaf_externalid')]"
+                            }
+                        }
+                    }
+                ],
+                "loadBalancingSettings": [
+                    {
+                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/LoadBalancingSettings/ApimLoadBalancer')]",
+                        "name": "ApimLoadBalancer",
+                        "properties": {
+                            "additionalLatencyMilliseconds": 0,
+                            "sampleSize": 4,
+                            "successfulSamplesRequired": 2,
+                            "resourceState": "Enabled"
+                        }
+                    }
+                ],
+                "routingRules": [
+                    {
+                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/RoutingRules/ApimRoutingRule')]",
+                        "name": "ApimRoutingRule",
+                        "properties": {
+                            "acceptedProtocols": [
+                                "Http",
+                                "Https"
+                            ],
+                            "patternsToMatch": [
+                                "/*"
+                            ],
+                            "enabledState": "Enabled",
+                            "resourceState": "Enabled",
+                            "frontendEndpoints": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/frontendEndpoints/MainFrontendEndpoint')]"
+                                }
+                            ],
+                            "routeConfiguration": {
+                                "customForwardingPath": "/",
+                                "forwardingProtocol": "MatchRequest",
+                                "@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
+                                "cacheConfiguration": {
+                                    "queryParameterStripDirective": "StripNone",
+                                    "dynamicCompression": "Enabled"
+                                },
+                                "backendPool": {
+                                    "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/backendPools/ApimBackendPool')]"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "backendPoolsSettings": {
+                    "enforceCertificateNameCheck": "Disabled",
+                    "sendRecvTimeoutSeconds": 120
+                }
+            }
+        }
+    ]
+}
