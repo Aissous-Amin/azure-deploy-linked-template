@@ -2,132 +2,274 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "frontdoors_frontdoor_devops_test_name": {
-            "defaultValue": "frontdoor-devops-test",
-            "type": "String"
+        "proxyOriginHostName": {
+            "type": "string",
+            "metadata": {
+                "description": "The host name that should be used when connecting to the origin for the API Management proxy gateway."
+            }
         },
-        "FrontDoorWebApplicationFirewallPolicies_FrontDoorApimSampleWaf_externalid": {
-            "defaultValue": "FrontDoorApimSampleWaf",
-            "type": "String"
-        }
-    },
-    "variables": {},
-    "resources": [
-        {
-            "type": "Microsoft.Network/frontdoors",
-            "apiVersion": "2020-05-01",
-            "name": "[parameters('frontdoors_frontdoor_devops_test_name')]",
-            "location": "Global",
-            "properties": {
-                "resourceState": "Enabled",
-                "enabledState": "Enabled",
-                "friendlyName": "[parameters('frontdoors_frontdoor_devops_test_name')]",
-                "backendPools": [
-                    {
-                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/BackendPools/ApimBackendPool')]",
-                        "name": "ApimBackendPool",
-                        "properties": {
-                            "resourceState": "Enabled",
-                            "backends": [
-                                {
-                                    "address": "apim-devops-test.azure-api.net",
-                                    "httpPort": 80,
-                                    "httpsPort": 443,
-                                    "priority": 1,
-                                    "weight": 100,
-                                    "backendHostHeader": "apim-devops-test.azure-api.net",
-                                    "enabledState": "Enabled"
-                                }
-                            ],
-                            "healthProbeSettings": {
-                                "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/healthProbeSettings/ApimHealthProbeSettings')]"
-                            },
-                            "loadBalancingSettings": {
-                                "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/loadBalancingSettings/ApimLoadBalancer')]"
-                            }
-                        }
-                    }
-                ],
-                "healthProbeSettings": [
-                    {
-                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/HealthProbeSettings/ApimHealthProbeSettings')]",
-                        "name": "ApimHealthProbeSettings",
-                        "properties": {
-                            "intervalInSeconds": 30,
-                            "path": "/status-0123456789abcdef",
-                            "protocol": "Https",
-                            "resourceState": "Enabled",
-                            "enabledState": "Enabled",
-                            "healthProbeMethod": "Get"
-                        }
-                    }
-                ],
-                "frontendEndpoints": [
-                    {
-                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/FrontendEndpoints/MainFrontendEndpoint')]",
-                        "name": "MainFrontendEndpoint",
-                        "properties": {
-                            "hostName": "[concat(parameters('frontdoors_frontdoor_devops_test_name'), '.azurefd.net')]",
-                            "sessionAffinityEnabledState": "Disabled",
-                            "sessionAffinityTtlSeconds": 0,
-                            "resourceState": "Enabled",
-                            "webApplicationFirewallPolicyLink": {
-                                "id": "[parameters('FrontDoorWebApplicationFirewallPolicies_FrontDoorApimSampleWaf_externalid')]"
-                            }
-                        }
-                    }
-                ],
-                "loadBalancingSettings": [
-                    {
-                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/LoadBalancingSettings/ApimLoadBalancer')]",
-                        "name": "ApimLoadBalancer",
-                        "properties": {
-                            "additionalLatencyMilliseconds": 0,
-                            "sampleSize": 4,
-                            "successfulSamplesRequired": 2,
-                            "resourceState": "Enabled"
-                        }
-                    }
-                ],
-                "routingRules": [
-                    {
-                        "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/RoutingRules/ApimRoutingRule')]",
-                        "name": "ApimRoutingRule",
-                        "properties": {
-                            "acceptedProtocols": [
-                                "Http",
-                                "Https"
-                            ],
-                            "patternsToMatch": [
-                                "/*"
-                            ],
-                            "enabledState": "Enabled",
-                            "resourceState": "Enabled",
-                            "frontendEndpoints": [
-                                {
-                                    "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/frontendEndpoints/MainFrontendEndpoint')]"
-                                }
-                            ],
-                            "routeConfiguration": {
-                                "customForwardingPath": "/",
-                                "forwardingProtocol": "MatchRequest",
-                                "@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
-                                "cacheConfiguration": {
-                                    "queryParameterStripDirective": "StripNone",
-                                    "dynamicCompression": "Enabled"
-                                },
-                                "backendPool": {
-                                    "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontdoors_frontdoor_devops_test_name')), '/backendPools/ApimBackendPool')]"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "backendPoolsSettings": {
-                    "enforceCertificateNameCheck": "Disabled",
-                    "sendRecvTimeoutSeconds": 120
-                }
+        "developerPortalOriginHostName": {
+            "type": "string",
+            "metadata": {
+                "description": "The host name that should be used when connecting to the origin for the API Management developer portal."
+            }
+        },
+        "proxyEndpointName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Front Door endpoint to create for the API Management proxy gateway. This must be globally unique."
+            }
+        },
+        "developerPortalEndpointName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Front Door endpoint to create for the API Management developer portal. This must be globally unique."
+            }
+        },
+        "skuName": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_AzureFrontDoor",
+                "Premium_AzureFrontDoor"
+            ],
+            "metadata": {
+                "description": "The name of the SKU to use when creating the Front Door profile. If you use Private Link this must be set to `Premium_AzureFrontDoor`."
             }
         }
-    ]
+    },
+    "functions": [],
+    "variables": {
+        "profileName": "FrontDoor",
+        "proxyOriginGroupName": "Proxy",
+        "developerPortalOriginGroupName": "DeveloperPortal",
+        "proxyOriginName": "ApiManagementProxy",
+        "developerPortalOriginName": "ApiManagementDeveloperPortal",
+        "proxyRouteName": "ProxyRoute",
+        "developerPortalRouteName": "DeveloperPortalRoute"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Cdn/profiles",
+            "apiVersion": "2020-09-01",
+            "name": "[variables('profileName')]",
+            "location": "global",
+            "sku": {
+                "name": "[parameters('skuName')]"
+            }
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/afdEndpoints",
+            "apiVersion": "2020-09-01",
+            "name": "[format('{0}/{1}', variables('profileName'), parameters('proxyEndpointName'))]",
+            "location": "global",
+            "properties": {
+                "originResponseTimeoutSeconds": 240,
+                "enabledState": "Enabled"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/originGroups",
+            "apiVersion": "2020-09-01",
+            "name": "[format('{0}/{1}', variables('profileName'), variables('proxyOriginGroupName'))]",
+            "properties": {
+                "loadBalancingSettings": {
+                    "sampleSize": 4,
+                    "successfulSamplesRequired": 3
+                },
+                "healthProbeSettings": {
+                    "probePath": "/",
+                    "probeRequestType": "HEAD",
+                    "probeProtocol": "Http",
+                    "probeIntervalInSeconds": 100
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/originGroups/origins",
+            "apiVersion": "2020-09-01",
+            "name": "[format('{0}/{1}/{2}', variables('profileName'), variables('proxyOriginGroupName'), variables('proxyOriginName'))]",
+            "properties": {
+                "hostName": "[parameters('proxyOriginHostName')]",
+                "httpPort": 80,
+                "httpsPort": 443,
+                "originHostHeader": "[parameters('proxyOriginHostName')]",
+                "priority": 1,
+                "weight": 1000
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]",
+                "[resourceId('Microsoft.Cdn/profiles/originGroups', variables('profileName'), variables('proxyOriginGroupName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/afdEndpoints/routes",
+            "apiVersion": "2020-09-01",
+            "name": "[format('{0}/{1}/{2}', variables('profileName'), parameters('proxyEndpointName'), variables('proxyRouteName'))]",
+            "properties": {
+                "originGroup": {
+                    "id": "[resourceId('Microsoft.Cdn/profiles/originGroups', variables('profileName'), variables('proxyOriginGroupName'))]"
+                },
+                "supportedProtocols": [
+                    "Http",
+                    "Https"
+                ],
+                "patternsToMatch": [
+                    "/*"
+                ],
+                "queryStringCachingBehavior": "NotSet",
+                "forwardingProtocol": "HttpsOnly",
+                "linkToDefaultDomain": "Enabled",
+                "httpsRedirect": "Enabled"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]",
+                "[resourceId('Microsoft.Cdn/profiles/afdEndpoints', variables('profileName'), parameters('proxyEndpointName'))]",
+                "[resourceId('Microsoft.Cdn/profiles/originGroups/origins', variables('profileName'), variables('proxyOriginGroupName'), variables('proxyOriginName'))]",
+                "[resourceId('Microsoft.Cdn/profiles/originGroups', variables('profileName'), variables('proxyOriginGroupName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/afdEndpoints",
+            "apiVersion": "2020-09-01",
+            "name": "[format('{0}/{1}', variables('profileName'), parameters('developerPortalEndpointName'))]",
+            "location": "global",
+            "properties": {
+                "originResponseTimeoutSeconds": 240,
+                "enabledState": "Enabled"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/originGroups",
+            "apiVersion": "2020-09-01",
+            "name": "[format('{0}/{1}', variables('profileName'), variables('developerPortalOriginGroupName'))]",
+            "properties": {
+                "loadBalancingSettings": {
+                    "sampleSize": 4,
+                    "successfulSamplesRequired": 3
+                },
+                "healthProbeSettings": {
+                    "probePath": "/",
+                    "probeRequestType": "HEAD",
+                    "probeProtocol": "Http",
+                    "probeIntervalInSeconds": 100
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/originGroups/origins",
+            "apiVersion": "2020-09-01",
+            "name": "[format('{0}/{1}/{2}', variables('profileName'), variables('developerPortalOriginGroupName'), variables('developerPortalOriginName'))]",
+            "properties": {
+                "hostName": "[parameters('developerPortalOriginHostName')]",
+                "httpPort": 80,
+                "httpsPort": 443,
+                "originHostHeader": "[parameters('developerPortalOriginHostName')]",
+                "priority": 1,
+                "weight": 1000
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles/originGroups', variables('profileName'), variables('developerPortalOriginGroupName'))]",
+                "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/afdEndpoints/routes",
+            "apiVersion": "2020-09-01",
+            "name": "[format('{0}/{1}/{2}', variables('profileName'), parameters('developerPortalEndpointName'), variables('developerPortalRouteName'))]",
+            "properties": {
+                "originGroup": {
+                    "id": "[resourceId('Microsoft.Cdn/profiles/originGroups', variables('profileName'), variables('developerPortalOriginGroupName'))]"
+                },
+                "supportedProtocols": [
+                    "Http",
+                    "Https"
+                ],
+                "patternsToMatch": [
+                    "/*"
+                ],
+                "compressionSettings": {
+                    "contentTypesToCompress": [
+                        "application/eot",
+                        "application/font",
+                        "application/font-sfnt",
+                        "application/javascript",
+                        "application/json",
+                        "application/opentype",
+                        "application/otf",
+                        "application/pkcs7-mime",
+                        "application/truetype",
+                        "application/ttf",
+                        "application/vnd.ms-fontobject",
+                        "application/xhtml+xml",
+                        "application/xml",
+                        "application/xml+rss",
+                        "application/x-font-opentype",
+                        "application/x-font-truetype",
+                        "application/x-font-ttf",
+                        "application/x-httpd-cgi",
+                        "application/x-javascript",
+                        "application/x-mpegurl",
+                        "application/x-opentype",
+                        "application/x-otf",
+                        "application/x-perl",
+                        "application/x-ttf",
+                        "font/eot",
+                        "font/ttf",
+                        "font/otf",
+                        "font/opentype",
+                        "image/svg+xml",
+                        "text/css",
+                        "text/csv",
+                        "text/html",
+                        "text/javascript",
+                        "text/js",
+                        "text/plain",
+                        "text/richtext",
+                        "text/tab-separated-values",
+                        "text/xml",
+                        "text/x-script",
+                        "text/x-component",
+                        "text/x-java-source"
+                    ],
+                    "isCompressionEnabled": true
+                },
+                "queryStringCachingBehavior": "IgnoreQueryString",
+                "forwardingProtocol": "HttpsOnly",
+                "linkToDefaultDomain": "Enabled",
+                "httpsRedirect": "Enabled"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles/afdEndpoints', variables('profileName'), parameters('developerPortalEndpointName'))]",
+                "[resourceId('Microsoft.Cdn/profiles/originGroups/origins', variables('profileName'), variables('developerPortalOriginGroupName'), variables('developerPortalOriginName'))]",
+                "[resourceId('Microsoft.Cdn/profiles/originGroups', variables('profileName'), variables('developerPortalOriginGroupName'))]",
+                "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]"
+            ]
+        }
+    ],
+    "outputs": {
+        "frontDoorId": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Cdn/profiles', variables('profileName'))).frontdoorId]"
+        },
+        "frontDoorProxyEndpointHostName": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Cdn/profiles/afdEndpoints', variables('profileName'), parameters('proxyEndpointName'))).hostName]"
+        },
+        "frontDoorDeveloperPortalEndpointHostName": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Cdn/profiles/afdEndpoints', variables('profileName'), parameters('developerPortalEndpointName'))).hostName]"
+        }
+    }
 }
