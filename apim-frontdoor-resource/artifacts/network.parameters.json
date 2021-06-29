@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "westeurope",
+            "metadata": {
+              "description": "The location into which the virtual network resources should be deployed."
+            }
+          },
+          "vnetIPPrefix": {
+            "value": "10.0.0.0/16",
+            "metadata": {
+              "description": "The IP address prefix (CIDR range) to use when deploying the virtual network."
+            }
+          },
+          "apiManagementSubnetIPPrefix": {
+            "value": "10.0.0.0/24",
+            "metadata": {
+              "description": "The IP address prefix (CIDR range) to use when deploying the API Management subnet within the virtual network."
+            }
+          }
+    }
+}

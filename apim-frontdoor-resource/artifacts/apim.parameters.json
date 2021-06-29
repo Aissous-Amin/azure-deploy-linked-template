@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "serviceName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "publisherName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "publisherEmail": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "skuName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "skuCount": {
+            "value": 0 // TODO: Fill in parameter value
+        },
+        "virtualNetworkType": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "subnetResourceId": {
+            "value": "" // TODO: Fill in parameter value
+        }
+    }
+}
