@@ -141,7 +141,7 @@
           }
         },
         "templateLink": {
-            "uri": "https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/apim-frontdoor-resource/artefacts/network.json",
+            "uri": "https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/apim-frontdoor-resource/artifacts/network.json",
             "contentVersion": "1.0.0.0"
         } 
       }
@@ -182,7 +182,7 @@
           }
         },
         "templateLink": {
-            "uri": "https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/apim-frontdoor-resource/artefacts/apim.json",
+            "uri": "https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/apim-frontdoor-resource/artifacts/apim.json",
             "contentVersion": "1.0.0.0"
         }
       },
@@ -217,7 +217,7 @@
           }
         },
         "templateLink": {
-            "uri": "https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/apim-frontdoor-resource/artefacts/frontDoor.json",
+            "uri": "https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/apim-frontdoor-resource/artifacts/frontDoor.json",
             "contentVersion": "1.0.0.0"
         }
       },
