@@ -13,13 +13,12 @@ steps:
 - task: AzureResourceManagerTemplateDeployment@3
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'AzureDeployLinkedTemplatePipelineConnection'
+    azureResourceManagerConnection: 'Training Azure subscription (e9411a02-d139-4506-86fe-178e36e5c3be)'
     subscriptionId: 'e9411a02-d139-4506-86fe-178e36e5c3be'
     action: 'Create Or Update Resource Group'
-    resourceGroupName: 'rg-apim-frontdoor-test'
+    resourceGroupName: 'rg-training-apim-01'
     location: 'West Europe'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/Aissous-Amin/azure-deploy-linked-template/main/apim-frontdoor-resource/azureDeploy.json'
-    overrideParameters: '-projectName coretechweb-test'
-    deploymentMode: 'Incremental'
-    deploymentName: 'DeployPipelineTemplate'
+    deploymentMode: 'Validation'
+    deploymentName: 'arm-validation-script'
